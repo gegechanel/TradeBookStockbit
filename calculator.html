@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Profit/Loss Trading</title>
+    <style>
+        /* CSS tetap sama seperti sebelumnya */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .calculator-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+          /* NAVIGASI BACK */
+        .back-nav {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #f8f9fa;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1px solid #e1e5e9;
+        }
+        
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-3px);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        input:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .fee-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .result-container.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .result-label {
+            color: #666;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .profit {
+            color: #27ae60;
+        }
+        
+        .loss {
+            color: #e74c3c;
+        }
+        
+        .breakdown {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #ddd;
+        }
+        
+        .breakdown-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .input-hint {
+            font-size: 12px;
+            color: #667eea;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .calculation-info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+         <!-- NAVIGASI KEMBALI -->
+        <div class="back-nav">
+            <a href="index.html" class="back-btn">
+                ← Kembali ke Home
+            </a>
+        </div>
+        <h1>🔄 Kalkulator Profit/Loss</h1>
+        <p class="subtitle">Hitung estimasi harga jual & persentase profit</p>
+        
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('target')" id="modeTarget">
+                🎯 Mode Target Profit
+            </button>
+            <button class="mode-btn" onclick="setMode('exit')" id="modeExit">
+                💰 Mode Harga Exit
+            </button>
+        </div>
+        
+        <div class="input-group">
+            <label for="entryPrice">Harga Entry (Rp)</label>
+            <input type="number" id="entryPrice" placeholder="Contoh: 1500" min="1">
+        </div>
+        
+        <div class="input-group">
+            <label for="lotSize">Jumlah LOT</label>
+            <input type="number" id="lotSize" placeholder="Contoh: 10" min="1" value="1">
+        </div>
+        
+        <div class="input-group" id="targetProfitGroup">
+            <label for="targetProfit">Target Profit (Rp)</label>
+            <input type="number" id="targetProfit" placeholder="Contoh: 500000" min="1">
+            <div class="input-hint">Isi target profit yang diinginkan</div>
+        </div>
+        
+        <div class="input-group" id="exitPriceGroup" style="display: none;">
+            <label for="exitPrice">Harga Exit (Rp)</label>
+            <input type="number" id="exitPrice" placeholder="Contoh: 1600" min="1">
+            <div class="input-hint">Isi harga jual yang direncanakan</div>
+        </div>
+        
+        <div class="input-group">
+            <label for="feeBuy">Fee Beli (%)</label>
+            <input type="number" id="feeBuy" placeholder="0.15" step="0.01" min="0" value="0.15">
+            <div class="fee-info">Biaya broker saat pembelian (dari total beli)</div>
+        </div>
+        
+        <div class="input-group">
+            <label for="feeSell">Fee Jual (%)</label>
+            <input type="number" id="feeSell" placeholder="0.25" step="0.01" min="0" value="0.25">
+            <div class="fee-info">Biaya broker saat penjualan (dari total jual)</div>
+        </div>
+        
+        <button class="calculate-btn" onclick="calculateProfitLoss()">
+            🧮 Hitung Estimasi
+        </button>
+        
+        <div id="resultContainer" class="result-container">
+            <div class="result-item">
+                <span class="result-label">Harga Jual Estimasi:</span>
+                <span class="result-value" id="exitPriceResult">-</span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Profit/Loss:</span>
+                <span class="result-value" id="profitLossResult">-</span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Kenaikan Harga:</span>
+                <span class="result-value" id="priceIncreaseResult">-</span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Persentase Profit:</span>
+                <span class="result-value" id="profitPercentageResult">-</span>
+            </div>
+            
+            <div class="breakdown">
+                <div class="breakdown-title">Detail Perhitungan:</div>
+                
+                <div class="result-item">
+                    <span class="result-label">Total Saham:</span>
+                    <span class="result-value" id="totalSharesResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Nilai Beli:</span>
+                    <span class="result-value" id="buyValueResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Nilai Jual:</span>
+                    <span class="result-value" id="sellValueResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Fee Beli:</span>
+                    <span class="result-value" id="feeBuyAmountResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Fee Jual:</span>
+                    <span class="result-value" id="feeSellAmountResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Total Fee:</span>
+                    <span class="result-value" id="totalFeeResult">-</span>
+                </div>
+                
+                <div class="calculation-info">
+                    💡 <strong>Rumus Fee:</strong><br>
+                    • Fee Beli = Nilai Beli × Fee Beli%<br>
+                    • Fee Jual = Nilai Jual × Fee Jual%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'target'; // 'target' atau 'exit'
+        
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Update tombol mode
+            document.getElementById('modeTarget').classList.toggle('active', mode === 'target');
+            document.getElementById('modeExit').classList.toggle('active', mode === 'exit');
+            
+            // Tampilkan/sembunyikan input yang sesuai
+            document.getElementById('targetProfitGroup').style.display = mode === 'target' ? 'block' : 'none';
+            document.getElementById('exitPriceGroup').style.display = mode === 'exit' ? 'block' : 'none';
+            
+            // Reset input yang tidak aktif
+            if (mode === 'target') {
+                document.getElementById('exitPrice').value = '';
+            } else {
+                document.getElementById('targetProfit').value = '';
+            }
+            
+            // Sembunyikan hasil sebelumnya
+            document.getElementById('resultContainer').classList.remove('show');
+        }
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        function formatPercentage(value) {
+            return value.toFixed(2) + '%';
+        }
+        
+        function calculateProfitLoss() {
+            // Ambil nilai input
+            const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
+            const lotSize = parseInt(document.getElementById('lotSize').value) || 1;
+            const feeBuy = parseFloat(document.getElementById('feeBuy').value) || 0;
+            const feeSell = parseFloat(document.getElementById('feeSell').value) || 0;
+            
+            // Validasi input dasar
+            if (!entryPrice) {
+                alert('Harap isi Harga Entry!');
+                return;
+            }
+            
+            // Hitung total saham (1 LOT = 100 lembar)
+            const totalShares = lotSize * 100;
+            
+            // Hitung nilai beli dan fee beli
+            const buyValue = entryPrice * totalShares;
+            const feeBuyAmount = buyValue * (feeBuy / 100);
+            const totalCost = buyValue + feeBuyAmount; // Total modal termasuk fee beli
+            
+            let exitPrice, actualProfit, targetProfit, sellValue, feeSellAmount;
+            
+            if (currentMode === 'target') {
+                // MODE TARGET PROFIT: Hitung Exit Price dari Target Profit
+                targetProfit = parseFloat(document.getElementById('targetProfit').value) || 0;
+                
+                if (!targetProfit) {
+                    alert('Harap isi Target Profit!');
+                    return;
+                }
+                
+                // ⭐⭐ RUMUS YANG BENAR: ⭐⭐
+                // Net Proceeds = Total Cost + Target Profit
+                // Net Proceeds = (Exit Price × Total Shares) - (Exit Price × Total Shares × Fee Jual%)
+                // Net Proceeds = Exit Price × Total Shares × (1 - Fee Jual%)
+                // Jadi: Exit Price × Total Shares × (1 - Fee Jual%) = Total Cost + Target Profit
+                // Exit Price = (Total Cost + Target Profit) / (Total Shares × (1 - Fee Jual%))
+                
+                exitPrice = (totalCost + targetProfit) / (totalShares * (1 - feeSell/100));
+                sellValue = exitPrice * totalShares;
+                feeSellAmount = sellValue * (feeSell / 100);
+                const netProceeds = sellValue - feeSellAmount;
+                actualProfit = netProceeds - totalCost;
+                
+            } else {
+                // MODE HARGA EXIT: Hitung Profit dari Harga Exit
+                exitPrice = parseFloat(document.getElementById('exitPrice').value) || 0;
+                
+                if (!exitPrice) {
+                    alert('Harap isi Harga Exit!');
+                    return;
+                }
+                
+                // Hitung nilai jual dan fee jual
+                sellValue = exitPrice * totalShares;
+                feeSellAmount = sellValue * (feeSell / 100);
+                const netProceeds = sellValue - feeSellAmount;
+                actualProfit = netProceeds - totalCost;
+            }
+            
+            // Hitung komponen lainnya
+            const totalFee = feeBuyAmount + feeSellAmount;
+            const priceIncrease = exitPrice - entryPrice;
+            const profitPercentage = ((exitPrice - entryPrice) / entryPrice) * 100;
+            
+            // Tampilkan hasil
+            document.getElementById('exitPriceResult').textContent = formatCurrency(exitPrice);
+            
+            // Tampilkan profit/loss dengan warna
+            const profitLossElement = document.getElementById('profitLossResult');
+            profitLossElement.textContent = formatCurrency(actualProfit);
+            profitLossElement.className = 'result-value ' + (actualProfit >= 0 ? 'profit' : 'loss');
+            
+            document.getElementById('priceIncreaseResult').textContent = formatCurrency(priceIncrease);
+            document.getElementById('profitPercentageResult').textContent = formatPercentage(profitPercentage);
+            document.getElementById('totalSharesResult').textContent = totalShares.toLocaleString() + ' lembar';
+            document.getElementById('buyValueResult').textContent = formatCurrency(buyValue);
+            document.getElementById('sellValueResult').textContent = formatCurrency(sellValue);
+            document.getElementById('feeBuyAmountResult').textContent = formatCurrency(feeBuyAmount);
+            document.getElementById('feeSellAmountResult').textContent = formatCurrency(feeSellAmount);
+            document.getElementById('totalFeeResult').textContent = formatCurrency(totalFee);
+            
+            // Tampilkan container hasil
+            document.getElementById('resultContainer').classList.add('show');
+        }
+        
+        // Auto-calculate ketika input berubah
+        document.getElementById('entryPrice').addEventListener('input', calculateProfitLoss);
+        document.getElementById('lotSize').addEventListener('input', calculateProfitLoss);
+        document.getElementById('targetProfit').addEventListener('input', calculateProfitLoss);
+        document.getElementById('exitPrice').addEventListener('input', calculateProfitLoss);
+        document.getElementById('feeBuy').addEventListener('input', calculateProfitLoss);
+        document.getElementById('feeSell').addEventListener('input', calculateProfitLoss);
+    </script>
+</body>
+</html>
