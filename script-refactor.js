@@ -7,7 +7,7 @@
 // ================================
 
 // Konfigurasi Google Apps Script
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5nymwb9rYMRCfPqrevTfXAch4KogtXQGB4HssHLKanBRHPrH6G2Vl6K1gSqEOs02i/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGYbRwWwoAoTVBMBllYiSwRhaLc-WSZ4smEBt7KXY2jM5aUimdQoFp0PDXakVwuSLy/exec';
 const PENDING_STORAGE_KEY = 'trading_pending_data';
 
 // ================================
