@@ -4260,11 +4260,15 @@ function updatePortfolioUI() {
         });
         
         // Update breakdown section
+        const netCashFlowValue = summary.totalTopUp - summary.totalWithdraw;
+        const totalPLValue = Math.abs(summary.totalPL);
+        const calculatedEquityValue = netCashFlowValue - totalPLValue;
+        
         const breakdownElements = [
             { id: 'initialCapital', value: formatRp(summary.totalTopUp) },
             { id: 'totalTradingPL', value: `${summary.totalPL >= 0 ? '+' : ''}${formatRp(summary.totalPL)}` },
-            { id: 'netCashFlow', value: formatRp(summary.totalTopUp - summary.totalWithdraw) },
-            { id: 'calculatedEquity', value: formatRp(summary.totalEquity) }
+            { id: 'netCashFlow', value: formatRp(netCashFlowValue) },
+            { id: 'calculatedEquity', value: formatRp(calculatedEquityValue) }
         ];
         
         breakdownElements.forEach(item => {
